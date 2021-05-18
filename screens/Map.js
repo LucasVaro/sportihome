@@ -5,6 +5,10 @@ import * as Location from 'expo-location';
 //Importation du bouton permettant de relancer une recherche de spot
 import ButtonRefresh from '../components/ButtonRefresh';
 import MarkerImg from '../assets/img/marker.png'
+import MarkerImgFav from '../assets/img/markerfav.png'
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 const Map = () => {
 
@@ -28,6 +32,10 @@ const Map = () => {
 
   const [modalState, setModalState] = useState(false);
   const [infoMarker, setInfoMarker] = useState();
+
+  const [favoris, setFavoris] = useState([])
+  const [logoFav, setLogoFav] = useState('ios-heart-outline')
+
 
 
 
@@ -67,13 +75,14 @@ const Map = () => {
           'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-          selectedHobbies: []
+          selectedHobbies: sport
         })
       })
       .then((response) => response.json())
       .then((json) => setSpot(json))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
+
 
     })();
 
@@ -91,13 +100,14 @@ const Map = () => {
         'Content-Type': 'application/json'
       },
       body:JSON.stringify({
-        selectedHobbies: []
+        selectedHobbies: sport
       })
     })
     .then((response) => response.json())
     .then((json) => setSpot(json))
     .catch((error) => console.error(error))
     .finally(() => setRefresh(false));
+
 
   }
 
@@ -107,38 +117,97 @@ const Map = () => {
       <Marker
       key={index}
       coordinate={{latitude : marker.loc.coordinates[1], longitude : marker.loc.coordinates[0] }}
-      image={MarkerImg}
+      image={imageFavoris(marker._id)}
       onPress={()=>{
         setModalState(true);
-        setInfoMarker({title:marker.name, description: marker.about})
+        setInfoMarker({title:marker.name, description: marker.about, id: marker._id})
+        verifFavorisLogo(marker._id)
       }}
       />
     ))
   }
 
-  //Function qui permet d'affiicher les information du spots dans une modal
+  //Fonction qui permet de mettre à jour le state qui charge le logo de l'ajout / retrait de favoris, afin qu'à l'ouverture de la modal le logo soit coché si le spot est favoris et inversement
+  function verifFavorisLogo(idSpot){
+
+    let favSpotArray = favoris;
+
+    let verifExist = favSpotArray.indexOf(idSpot);
+
+    if (verifExist == -1) {
+      setLogoFav('ios-heart-outline')
+    }else {
+      setLogoFav('ios-heart')
+    }
+
+  }
+
+  //Function qui permet d'afficher les informations du spot dans une modal
   function modal(){
+
     return <View style={styles.modal}>
 
-      <View>
-        <Text style={styles.modalTitle}>
-          {infoMarker.title}
-        </Text>
-      </View>
+    <Pressable style={styles.favorisBtn} onPress={()=>{favorisSpots(infoMarker.id)}}>
+    <Ionicons name={logoFav} size={20} color="#000" />
+    </Pressable>
 
-      <ScrollView style={styles.containerDescription}>
-        <Text style={styles.modalDescription}>
-          {infoMarker.description}
-        </Text>
-      </ScrollView>
+    <View>
+    <Text style={styles.modalTitle}>
+    {infoMarker.title}
+    </Text>
+    </View>
 
-      <View style={styles.containerCloseBtn}>
-        <Pressable style={styles.closeBtn} onPress={()=>{setModalState(false)}}>
-          <Text style={styles.textCloseBtn}>Fermer</Text>
-        </Pressable>
-      </View>
+    <ScrollView style={styles.containerDescription}>
+    <Text style={styles.modalDescription}>
+    {infoMarker.description}
+    </Text>
+    </ScrollView>
+
+    <View style={styles.containerCloseBtn}>
+    <Pressable style={styles.closeBtn} onPress={()=>{setModalState(false)}}>
+    <Text style={styles.textCloseBtn}>Fermer</Text>
+    </Pressable>
+    </View>
 
     </View>
+  }
+
+  //Fonction qui permet de changer l'image du marker lorsqu'il est favoris
+  function imageFavoris(idSpot){
+    let favSpotArray = favoris;
+
+    let verifExist = favSpotArray.indexOf(idSpot);
+
+    if (verifExist == -1) {
+      return MarkerImg
+    }else {
+      return MarkerImgFav
+    }
+
+  }
+
+
+  //Fonction qui permet d'ajouter ou retirer un spot des favoris
+  function favorisSpots(idSpot){
+
+    if(logoFav === "ios-heart-outline") {
+      setLogoFav('ios-heart')
+    }else if (logoFav === "ios-heart") {
+      setLogoFav('ios-heart-outline')
+    }
+
+    let favSpotArray = favoris;
+
+    let verifExist = favSpotArray.indexOf(idSpot);
+
+    if (verifExist == -1) {
+      favSpotArray.push(idSpot);
+    }else {
+      favSpotArray.splice(verifExist);
+    }
+
+    setFavoris(favSpotArray)
+
   }
 
   return(
@@ -146,8 +215,8 @@ const Map = () => {
 
     {loading ?
       <View>
-        <Text style={styles.loadingText}>Chargement</Text>
-        <ActivityIndicator size="small" color="#fff" />
+      <Text style={styles.loadingText}>Chargement</Text>
+      <ActivityIndicator size="small" color="#fff" />
       </View> :
       (
 
@@ -175,21 +244,22 @@ const Map = () => {
 
         {spotMarkers()}
 
-          {
-            modalState ? (
-              modal()
-            ) : <View></View>
-          }
+        {
+          modalState ? (
+            modal()
+          ) : <View></View>
+        }
 
         </MapView>
       )
     }
-    <View style={refresh ? {display: "block"} : {display:"none"}}>
+      <View style={refresh ? {display: "block"} : {display:"none"}}>
 
-      <ButtonRefresh
+        <ButtonRefresh
         action={()=>getMarkersApi()}
-      />
-    </View>
+        />
+      </View>
+      
     </View>
   )
 
@@ -264,6 +334,12 @@ const styles = StyleSheet.create({
     margin: 10,
     marginBottom: 40,
     paddingBottom: 10
+  },
+
+  favorisBtn: {
+    position: 'absolute',
+    right: 10,
+    top: 10
   }
 
 })
