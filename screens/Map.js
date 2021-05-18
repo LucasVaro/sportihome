@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps'
-import { StyleSheet, Text, View, Dimensions, ActivityIndicator, Pressable } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator, Pressable } from 'react-native';
 import * as Location from 'expo-location';
 //Importation du bouton permettant de relancer une recherche de spot
 import ButtonRefresh from '../components/ButtonRefresh';
+import MarkerImg from '../assets/img/marker.png'
 
 const Map = () => {
 
@@ -23,6 +24,10 @@ const Map = () => {
   const [refresh, setRefresh] = useState(false);
   const [northeastRefresh, setNortheastRefresh] = useState([]);
   const [southwestRefresh, setSouthwestRefresh] = useState([]);
+
+
+  const [modalState, setModalState] = useState(false);
+  const [infoMarker, setInfoMarker] = useState();
 
 
 
@@ -94,8 +99,6 @@ const Map = () => {
     .catch((error) => console.error(error))
     .finally(() => setRefresh(false));
 
-    console.log(refresh);
-
   }
 
   // Affichage des spots stockés dans la state
@@ -104,10 +107,38 @@ const Map = () => {
       <Marker
       key={index}
       coordinate={{latitude : marker.loc.coordinates[1], longitude : marker.loc.coordinates[0] }}
-      title={marker.name}
-      description={marker.about}
+      image={MarkerImg}
+      onPress={()=>{
+        setModalState(true);
+        setInfoMarker({title:marker.name, description: marker.about})
+      }}
       />
     ))
+  }
+
+  //Function qui permet d'affiicher les information du spots dans une modal
+  function modal(){
+    return <View style={styles.modal}>
+
+      <View>
+        <Text style={styles.modalTitle}>
+          {infoMarker.title}
+        </Text>
+      </View>
+
+      <ScrollView style={styles.containerDescription}>
+        <Text style={styles.modalDescription}>
+          {infoMarker.description}
+        </Text>
+      </ScrollView>
+
+      <View style={styles.containerCloseBtn}>
+        <Pressable style={styles.closeBtn} onPress={()=>{setModalState(false)}}>
+          <Text style={styles.textCloseBtn}>Fermer</Text>
+        </Pressable>
+      </View>
+
+    </View>
   }
 
   return(
@@ -138,14 +169,17 @@ const Map = () => {
           setNortheastRefresh(northeast);
           setSouthwestRefresh(southwest);
           setRefresh(true);
-          console.log(refresh);
 
         }}
         >
 
         {spotMarkers()}
 
-
+          {
+            modalState ? (
+              modal()
+            ) : <View></View>
+          }
 
         </MapView>
       )
@@ -185,6 +219,52 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700'
   },
+
+  modal: {
+    backgroundColor: '#FFF',
+    width: '80%',
+    height: 250,
+    alignItems: 'center',
+    paddingTop: 20,
+    borderRadius: 10
+  },
+
+  modalTitle:{
+    fontSize: 20,
+    marginBottom: 10,
+  },
+
+  modalDescription:{
+    fontSize: 14
+  },
+
+  containerCloseBtn: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+  },
+
+  closeBtn:{
+    backgroundColor: '#3589FF',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+
+  textCloseBtn: {
+    color: '#FFF',
+    textTransform: 'uppercase',
+    fontWeight: '700'
+  },
+
+  containerDescription: {
+    margin: 10,
+    marginBottom: 40,
+    paddingBottom: 10
+  }
 
 })
 
