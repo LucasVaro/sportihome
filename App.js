@@ -3,10 +3,11 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Map from './screens/Map.js'
 
+
 export default function App() {
   return (
     <View style={styles.container}>
-      <Map />
+      <Map style={styles.map} />
       <StatusBar style="auto" />
     </View>
   );
@@ -19,4 +20,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
 });

@@ -1,22 +1,29 @@
 import React, {useEffect, useState} from 'react'
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps'
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ActivityIndicator, Pressable } from 'react-native';
 import * as Location from 'expo-location';
-
+//Importation du bouton permettant de relancer une recherche de spot
+import ButtonRefresh from '../components/ButtonRefresh';
 
 const Map = () => {
 
-  const [loadingStep, setLoadingStep] = useState(true);
   const [loading, setLoading] = useState(true);
 
-
   const [errorLocation, setErrorLocation] = useState();
+
   const [spot, setSpot] = useState([]);
+  const [sport, setSport] = useState([])
+
   const [longitude, setLongitude] = useState(5.522865888665046);
   const [latitude, setLatitude] = useState(43.217965376775766);
 
   const [northeastCoords, setNortheastCoords] = useState([]);
   const [southwestCoords, setSouthwestCoords] = useState([]);
+
+  const [refresh, setRefresh] = useState(false);
+  const [northeastRefresh, setNortheastRefresh] = useState([]);
+  const [southwestRefresh, setSouthwestRefresh] = useState([]);
+
 
 
   useEffect(() => {
@@ -55,7 +62,7 @@ const Map = () => {
           'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-          selectedHobbies: ['KITEBOARDING', 'BMX']
+          selectedHobbies: []
         })
       })
       .then((response) => response.json())
@@ -68,6 +75,28 @@ const Map = () => {
 
 
   }, []);
+
+  // Récupération des spots dans l'API, lorsque les limites ont été déplacé et le bouton de relance a été cliqué
+  function getMarkersApi(){
+    fetch('https://sportihome.com/api/spots/getAllMarkersInBounds/'+southwestRefresh.longitude+','+southwestRefresh.latitude+'/'+northeastRefresh.longitude+','+northeastRefresh.latitude,
+    {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body:JSON.stringify({
+        selectedHobbies: []
+      })
+    })
+    .then((response) => response.json())
+    .then((json) => setSpot(json))
+    .catch((error) => console.error(error))
+    .finally(() => setRefresh(false));
+
+    console.log(refresh);
+
+  }
 
   // Affichage des spots stockés dans la state
   function spotMarkers(){
@@ -84,23 +113,49 @@ const Map = () => {
   return(
     <View style={styles.container}>
 
-    {loading ? <Text>Loading...</Text> :
+    {loading ?
+      <View>
+        <Text style={styles.loadingText}>Chargement</Text>
+        <ActivityIndicator size="small" color="#fff" />
+      </View> :
       (
+
         <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{latitude: latitude, longitude: longitude, latitudeDelta: 0.5, longitudeDelta: 0.5}}
         showsUserLocation={true}
+        onRegionChangeComplete={(pos) => {
+          let northeast = {
+            latitude: pos.latitude + pos.latitudeDelta / 2,
+            longitude: pos.longitude + pos.longitudeDelta / 2,
+          }
+          , southwest = {
+            latitude: pos.latitude - pos.latitudeDelta / 2,
+            longitude: pos.longitude - pos.longitudeDelta / 2,
+          };
+
+          setNortheastRefresh(northeast);
+          setSouthwestRefresh(southwest);
+          setRefresh(true);
+          console.log(refresh);
+
+        }}
         >
 
         {spotMarkers()}
 
+
+
         </MapView>
       )
     }
+    <View style={refresh ? {display: "block"} : {display:"none"}}>
 
-
-
+      <ButtonRefresh
+        action={()=>getMarkersApi()}
+      />
+    </View>
     </View>
   )
 
@@ -108,16 +163,29 @@ const Map = () => {
 
 const styles = StyleSheet.create({
   container: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#3589FF',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   map: {
-    width: Dimensions.get('window').width ,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-  }
+  },
+
+  loadingText: {
+    color: '#FFF',
+    marginBottom: 30,
+    fontSize: 30,
+    fontWeight: '700'
+  },
+
 })
 
 export default Map
