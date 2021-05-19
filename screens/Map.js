@@ -27,9 +27,6 @@ const Map = (props) => {
   const [longitude, setLongitude] = useState(5.522865888665046);
   const [latitude, setLatitude] = useState(43.217965376775766);
 
-  const [northeastCoords, setNortheastCoords] = useState([]);
-  const [southwestCoords, setSouthwestCoords] = useState([]);
-
   const [refresh, setRefresh] = useState(false);
   const [northeastRefresh, setNortheastRefresh] = useState([]);
   const [southwestRefresh, setSouthwestRefresh] = useState([]);

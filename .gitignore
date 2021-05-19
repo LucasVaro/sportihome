@@ -8,6 +8,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 *-step.js
+.env
+app.json
 web-build/
 
 # macOS

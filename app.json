@@ -26,7 +26,9 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBB2--VbtCqp_ot92aQfsBkAGC2NBERPlE"
+          //.env
+          "apiKey": "AIzaSyCg3sSE9PXZihjocZRHaDuU9pa9QFijIs8"
+          //
         }
       },
       "package": "com.rovarg.sportihomeexercice"
