@@ -1,14 +1,14 @@
 import React from 'react';
 import {StyleSheet, View, Text, Pressable} from 'react-native';
 
-const ButtonRefresh = (props) =>{
+const ButtonFiltre = (props) =>{
 
   const {action} = props;
 
   return (
     <View style={styles.container}>
       <Pressable style={styles.button} onPress={action}>
-          <Text style={styles.textButton}>Relancer la recherche</Text>
+          <Text style={styles.textButton}>Filtrer</Text>
       </Pressable>
     </View>
   );
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default ButtonRefresh
+export default ButtonFiltre

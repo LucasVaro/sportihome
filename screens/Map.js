@@ -1,16 +1,22 @@
 import React, {useEffect, useState} from 'react'
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps'
-import { StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator, Pressable } from 'react-native';
+import { Text, View, ScrollView, Dimensions, ActivityIndicator, Pressable } from 'react-native';
 import * as Location from 'expo-location';
 //Importation du bouton permettant de relancer une recherche de spot
 import ButtonRefresh from '../components/ButtonRefresh';
+import ButtonFiltre from '../components/ButtonFiltre';
+import SportItem from '../components/SportItem'
+
 import MarkerImg from '../assets/img/marker.png'
 import MarkerImgFav from '../assets/img/markerfav.png'
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MultiSelect from 'react-native-multiple-select';
+
+import styles from './styles'
+import listeSports from '../data/listeSports'
 
 
-const Map = () => {
+const Map = (props) => {
 
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +42,7 @@ const Map = () => {
   const [favoris, setFavoris] = useState([])
   const [logoFav, setLogoFav] = useState('ios-heart-outline')
 
-
+  const [filtreMap, setFiltreMap] = useState(true)
 
 
   useEffect(() => {
@@ -83,15 +89,13 @@ const Map = () => {
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
 
-
     })();
-
-
 
   }, []);
 
   // Récupération des spots dans l'API, lorsque les limites ont été déplacé et le bouton de relance a été cliqué
   function getMarkersApi(){
+
     fetch('https://sportihome.com/api/spots/getAllMarkersInBounds/'+southwestRefresh.longitude+','+southwestRefresh.latitude+'/'+northeastRefresh.longitude+','+northeastRefresh.latitude,
     {
       method: "POST",
@@ -186,7 +190,6 @@ const Map = () => {
 
   }
 
-
   //Fonction qui permet d'ajouter ou retirer un spot des favoris
   function favorisSpots(idSpot){
 
@@ -210,6 +213,29 @@ const Map = () => {
 
   }
 
+  //Fonction qui permet d'afficher tous les sports dispo dans l'API sportihome
+  function listSports(){
+    return listeSports.map((item, i) => (
+      <SportItem key={i} index={i} sport={item} action={()=>{stepFiltre(item)}}></SportItem>
+    ));
+  }
+
+  //Fonction qui permet d'ajouter un sport dans le filtre
+  function stepFiltre(itemSport){
+
+    let listeFiltre = sport;
+
+    let verifExist = listeFiltre.indexOf(itemSport)
+
+    if (verifExist == -1) {
+      listeFiltre.push(itemSport)
+    }else{
+      listeFiltre.splice(verifExist)
+    }
+
+    setSport(listeFiltre)
+  }
+
   return(
     <View style={styles.container}>
 
@@ -218,8 +244,8 @@ const Map = () => {
       <Text style={styles.loadingText}>Chargement</Text>
       <ActivityIndicator size="small" color="#fff" />
       </View> :
+      filtreMap ?
       (
-
         <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -242,6 +268,7 @@ const Map = () => {
         }}
         >
 
+
         {spotMarkers()}
 
         {
@@ -251,97 +278,38 @@ const Map = () => {
         }
 
         </MapView>
+      ) : (
+        <View style={styles.containerFiltre}>
+        <ScrollView style={styles.listSports} showsVerticalScrollIndicator={false}>
+        {listSports()}
+        </ScrollView>
+        <View>
+        <Pressable style={styles.filtreBtn} onPress={()=>{
+          getMarkersApi()
+          setFiltreMap(true)
+        }}>
+        <Text style={styles.textFiltreBtn}>Filtrer</Text>
+        </Pressable>
+        </View>
+        </View>
       )
     }
-      <View style={refresh ? {display: "block"} : {display:"none"}}>
-
-        <ButtonRefresh
-        action={()=>getMarkersApi()}
-        />
-      </View>
-      
+    <View style={loading ?  {display:"none"} : filtreMap ? styles.containerBtn : {display:"none"}}>
+    <ButtonFiltre
+    action={()=>{
+      setFiltreMap(false)
+      setSport([])
+    }}
+    />
+    <View style={refresh ? {display: "block"} : {display:"none"}}>
+    <ButtonRefresh
+    action={()=>getMarkersApi()}
+    />
+    </View>
+    </View>
     </View>
   )
 
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-    flex: 1,
-    backgroundColor: '#3589FF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  map: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-
-  loadingText: {
-    color: '#FFF',
-    marginBottom: 30,
-    fontSize: 30,
-    fontWeight: '700'
-  },
-
-  modal: {
-    backgroundColor: '#FFF',
-    width: '80%',
-    height: 250,
-    alignItems: 'center',
-    paddingTop: 20,
-    borderRadius: 10
-  },
-
-  modalTitle:{
-    fontSize: 20,
-    marginBottom: 10,
-  },
-
-  modalDescription:{
-    fontSize: 14
-  },
-
-  containerCloseBtn: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-  },
-
-  closeBtn:{
-    backgroundColor: '#3589FF',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-
-  textCloseBtn: {
-    color: '#FFF',
-    textTransform: 'uppercase',
-    fontWeight: '700'
-  },
-
-  containerDescription: {
-    margin: 10,
-    marginBottom: 40,
-    paddingBottom: 10
-  },
-
-  favorisBtn: {
-    position: 'absolute',
-    right: 10,
-    top: 10
-  }
-
-})
 
 export default Map
