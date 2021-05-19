@@ -244,7 +244,9 @@ const Map = (props) => {
       <ActivityIndicator size="small" color="#fff" />
       </View> :
       filtreMap ?
-      (
+      modalState ? (
+        modal()
+      ) : (
         <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -270,12 +272,6 @@ const Map = (props) => {
 
         {spotMarkers()}
 
-        {
-          modalState ? (
-            modal()
-          ) : <View></View>
-        }
-
         </MapView>
       ) : (
         <View style={styles.containerFiltre}>
@@ -293,7 +289,7 @@ const Map = (props) => {
         </View>
       )
     }
-    <View style={loading ?  {display:"none"} : filtreMap ? styles.containerBtn : ""}>
+    <View style={loading ? {display:"none"} : filtreMap ? modalState ? {display:"none"} : styles.containerBtn : {display:"none"}}>
     <ButtonFiltre
     action={()=>{
       setFiltreMap(false)

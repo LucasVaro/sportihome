@@ -27,8 +27,10 @@ const styles = StyleSheet.create({
 
   modal: {
     backgroundColor: '#FFF',
+    borderWidth:2,
+    borderColor:'#FFF',
     width: '80%',
-    height: 250,
+    height: Dimensions.get('window').height-300,
     alignItems: 'center',
     paddingTop: 20,
     borderRadius: 10
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    marginTop: 150,
+    marginTop: 10,
     padding: 40,
     paddingRight: 10,
     paddingLeft: 10,
