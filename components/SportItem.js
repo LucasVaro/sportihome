@@ -15,17 +15,15 @@ const SportItem = (props) =>{
     }else {
       setIcon("ios-add")
     }
+    action()
   }
 
   return (
     <View key={index} style={styles.containerSportItem}>
-    
+
       <Text style={styles.sportItem}>{sport}</Text>
       <Pressable
-
-      // Petit problème, je n'ai pas réussi à mettre les 2 fonctions dans onPress
-      onPressIn={()=>{addFiltre()}}
-      onPress={action}
+      onPress={()=>{addFiltre()}}
       >
       <Ionicons name={icon} size={30}/>
       </Pressable>
