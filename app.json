@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#3589FF"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,8 +22,14 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#3589FF"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBB2--VbtCqp_ot92aQfsBkAGC2NBERPlE"
+        }
+      },
+      "package": "com.rovarg.sportihomeexercice"
     },
     "web": {
       "favicon": "./assets/favicon.png"

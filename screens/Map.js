@@ -294,14 +294,14 @@ const Map = (props) => {
         </View>
       )
     }
-    <View style={loading ?  {display:"none"} : filtreMap ? styles.containerBtn : {display:"none"}}>
+    <View style={loading ?  {display:"none"} : filtreMap ? styles.containerBtn : ""}>
     <ButtonFiltre
     action={()=>{
       setFiltreMap(false)
       setSport([])
     }}
     />
-    <View style={refresh ? {display: "block"} : {display:"none"}}>
+    <View style={refresh ? "" : {display:"none"}}>
     <ButtonRefresh
     action={()=>getMarkersApi()}
     />
