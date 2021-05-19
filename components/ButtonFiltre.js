@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Pressable} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ButtonFiltre = (props) =>{
 
@@ -8,7 +9,7 @@ const ButtonFiltre = (props) =>{
   return (
     <View style={styles.container}>
       <Pressable style={styles.button} onPress={action}>
-          <Text style={styles.textButton}>Filtrer</Text>
+        <Ionicons name="md-options" size={25} color="#FFF" />
       </Pressable>
     </View>
   );
@@ -29,12 +30,6 @@ const styles = StyleSheet.create({
     padding: 20,
     margin: 10
   },
-
-  textButton:{
-    color: '#FFF',
-    textTransform: 'uppercase',
-    fontWeight: '700',
-  }
 
 })
 

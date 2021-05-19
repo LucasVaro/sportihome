@@ -18,19 +18,19 @@ const SportItem = (props) =>{
   }
 
   return (
-    <Pressable
-    key={index}
-    // Petit problème, je n'ai pas réussi à mettre les 2 fonctions dans onPress
-    onPressIn={()=>{addFiltre()}}
-    onPress={action}
-    >
-
-    <View style={styles.containerSportItem}>
+    <View key={index} style={styles.containerSportItem}>
+    
       <Text style={styles.sportItem}>{sport}</Text>
-      <Ionicons name={icon} size={30}/>
-    </View>
+      <Pressable
 
-    </Pressable>
+      // Petit problème, je n'ai pas réussi à mettre les 2 fonctions dans onPress
+      onPressIn={()=>{addFiltre()}}
+      onPress={action}
+      >
+      <Ionicons name={icon} size={30}/>
+      </Pressable>
+
+    </View>
   );
 };
 
