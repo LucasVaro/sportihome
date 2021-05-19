@@ -8,3 +8,5 @@ https://docs.expo.io/
 % npm add expo
 ## 4/ Lancement du projet
 % npm start
+## 5/ Insertion de l'API KEY Google Maps
+Aller dans app.json et remplacer API_GOOGLE par la clé API
