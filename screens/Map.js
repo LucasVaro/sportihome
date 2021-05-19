@@ -10,7 +10,6 @@ import SportItem from '../components/SportItem'
 import MarkerImg from '../assets/img/marker.png'
 import MarkerImgFav from '../assets/img/markerfav.png'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MultiSelect from 'react-native-multiple-select';
 
 import styles from './styles'
 import listeSports from '../data/listeSports'

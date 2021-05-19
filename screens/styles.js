@@ -77,17 +77,6 @@ const styles = StyleSheet.create({
     top: 10
   },
 
-  containerFiltre: {
-    position: 'absolute',
-    borderRadius: 10,
-    backgroundColor: '#FFF',
-    top: '30%',
-    width: '80%',
-    height: '40%',
-    alignItems: 'center',
-    padding: 20
-  },
-
   titleFiltre: {
     marginTop: 10,
     textTransform: 'uppercase',
@@ -112,6 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    marginTop: 150,
     padding: 40,
     paddingRight: 10,
     paddingLeft: 10,
