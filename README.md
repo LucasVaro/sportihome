@@ -1,5 +1,6 @@
 # sportihome
 Exercice pour Sportihome
+- Vidéo du projet : https://youtu.be/iuLll8vT0O4
 ## 1/ Installation d'Expo
 https://docs.expo.io/
 ## 2/ Récupération du projet Sportihome
